@@ -3,7 +3,9 @@ import Dropdown from "@/Components/Dropdown";
 import NavLink from "@/Components/NavLink";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
 import { Link, usePage } from "@inertiajs/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { toast, Toaster } from "react-hot-toast";
+
 // import Logo from "../asssets/images/logo.png";
 
 import {
@@ -32,8 +34,22 @@ import {
 } from "lucide-react";
 
 const menuItems = [
-    { icon: Home, label: "Dashboard", active: true },
-    { icon: Users, label: "Staffs", hasSubmenu: true },
+    {
+        icon: Home,
+        label: "Dashboard",
+        hasSubmenu: false,
+
+        route: route("dashboard"),
+    },
+    {
+        icon: Users,
+        label: "Staffs",
+        hasSubmenu: true,
+        submenu: [
+            { label: "Rolse", link: route("roles.index") },
+            { label: "Users", link: route("users.index") },
+        ],
+    },
     { icon: MessageCircle, label: "AI Support" },
     { icon: BookOpen, label: "Courses", hasSubmenu: true },
     { icon: Video, label: "Live Classes", badge: "Addon", hasSubmenu: true },
@@ -54,6 +70,12 @@ const menuItems = [
 export default function AuthenticatedLayout({ header, children }) {
     const [isFull, setIsFull] = useState(false);
     const [isCollapsed, setIsCollapsed] = useState(null);
+
+    const { flash } = usePage().props;
+
+    useEffect(() => {
+        if (flash?.success) toast.success(flash.success);
+    }, [flash]);
 
     const toggleSubmenu = (i) => {
         setIsCollapsed(isCollapsed === i ? null : i);
@@ -98,73 +120,189 @@ export default function AuthenticatedLayout({ header, children }) {
                     style={{ scrollbarWidth: "none" }}
                 >
                     <ul className="space-y-1 px-3">
-                        {menuItems.map((item, index) => (
-                            <li key={index}>
-                                <a
-                                    onClick={() => toggleSubmenu(index)}
-                                    href="#"
-                                    className={`flex items-center justify-between px-3 py-2 rounded-t-lg text-sm transition-colors ${
-                                        isCollapsed === index
-                                            ? "bg-gray-100/90 text-blue-700"
-                                            : "text-gray-700 hover:bg-gray-50"
-                                    }`}
-                                >
-                                    <div className="flex items-center space-x-3">
-                                        <item.icon className="w-5 h-5" />
-                                        {!isFull && <span>{item.label}</span>}
-                                    </div>
-                                    <div className="flex items-center space-x-2">
-                                        {item.badge && (
-                                            <span
-                                                className={`${
-                                                    !isFull
-                                                        ? "px-2 py-1 text-xs"
-                                                        : "px-1 text-[8px]"
-                                                }  bg-red-500 text-white rounded`}
-                                            >
-                                                {item.badge}
-                                            </span>
-                                        )}
-                                        {item.hasSubmenu && (
-                                            <svg
-                                                className={`w-4 h-4 transform transition-transform ${
-                                                    isCollapsed === index
-                                                        ? "rotate-90 duration-75"
-                                                        : ""
-                                                }`}
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth={2}
-                                                    d="M9 5l7 7-7 7"
-                                                />
-                                            </svg>
-                                        )}
-                                    </div>
-                                </a>
-                                {item.hasSubmenu && (
-                                    <div
-                                        className={`px-5 m-auto bg-gray-100/50 overflow-hidden transition-all duration-500 ease-in-out ${
-                                            isCollapsed === index
-                                                ? "max-h-auto opacity-100"
-                                                : "max-h-0 opacity-0"
+                        {menuItems.map((item, index) => {
+                            const url = window.location.pathname; // or use React Router's useLocation()
+                            const isSubActive = item.submenu?.some((sub) =>
+                                url.startsWith(sub.link)
+                            );
+                            const isActive =
+                                item.route && url.startsWith(item.route);
+                            console.log(isSubActive);
+
+                            return (
+                                <li key={index}>
+                                    <a
+                                        onClick={() => toggleSubmenu(index)}
+                                        href={item.route ? item.route : "#"}
+                                        className={`flex items-center justify-between px-3 py-2 rounded-t-lg text-sm transition-colors ${
+                                            isCollapsed === index ||
+                                            isActive ||
+                                            isSubActive
+                                                ? "bg-gray-200/90 text-blue-700"
+                                                : "text-gray-700 hover:bg-gray-50"
                                         }`}
                                     >
-                                        <ul className="flex-col flex gap-1 text-xs text-gray-600">
-                                            <li className="">1</li>
-                                            <li className="">1</li>
-                                            <li className="">1</li>
-                                            <li className="">1</li>
-                                        </ul>
-                                    </div>
-                                )}
-                            </li>
-                        ))}
+                                        <div className="flex items-center space-x-3">
+                                            <item.icon className="w-5 h-5" />
+                                            {!isFull && (
+                                                <span>{item.label}</span>
+                                            )}
+                                        </div>
+                                        <div className="flex items-center space-x-2">
+                                            {item.badge && (
+                                                <span
+                                                    className={`${
+                                                        !isFull
+                                                            ? "px-2 py-1 text-xs"
+                                                            : "px-1 text-[8px]"
+                                                    } bg-red-500 text-white rounded`}
+                                                >
+                                                    {item.badge}
+                                                </span>
+                                            )}
+                                            {item.hasSubmenu && (
+                                                <svg
+                                                    className={`w-4 h-4 transform transition-transform ${
+                                                        isCollapsed === index ||
+                                                        isSubActive
+                                                            ? "rotate-90"
+                                                            : ""
+                                                    }`}
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    viewBox="0 0 24 24"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        strokeWidth={2}
+                                                        d="M9 5l7 7-7 7"
+                                                    />
+                                                </svg>
+                                            )}
+                                        </div>
+                                    </a>
+
+                                    {item.hasSubmenu && (
+                                        <div
+                                            className={`px-5 overflow-hidden transition-all duration-500 ease-in-out ${
+                                                isCollapsed === index ||
+                                                isSubActive
+                                                    ? "max-h-screen opacity-100 bg-gray-100"
+                                                    : "max-h-0 opacity-0"
+                                            }`}
+                                        >
+                                            <ul className="flex-col flex gap-1 text-sm text-gray-600">
+                                                {item.submenu?.map(
+                                                    (sub, subIndex) => {
+                                                        const subActive =
+                                                            url.startsWith(
+                                                                sub.link
+                                                            );
+                                                        return (
+                                                            <li key={subIndex}>
+                                                                <a
+                                                                    href={
+                                                                        sub.link
+                                                                    }
+                                                                    className={`block px-2 py-1 rounded ${
+                                                                        subActive
+                                                                            ? "bg-blue-100 text-blue-700"
+                                                                            : "hover:bg-gray-50"
+                                                                    }`}
+                                                                >
+                                                                    {sub.label}
+                                                                </a>
+                                                            </li>
+                                                        );
+                                                    }
+                                                )}
+                                            </ul>
+                                        </div>
+                                    )}
+                                </li>
+                            );
+                        })}
                     </ul>
+
+                    {/* <ul className="space-y-1 px-3">
+                        {menuItems.map((item, index) => {
+                            // You may need to define 'url' or replace with your own logic for active route
+                            // For now, we'll just use item.active as a placeholder
+                            const isActive = item.route;
+
+                            return (
+                                <li key={index}>
+                                    <a
+                                        onClick={() => toggleSubmenu(index)}
+                                        href={item.route ? item.route : "#"}
+                                        className={`flex items-center justify-between px-3 py-2 rounded-t-lg text-sm transition-colors ${
+                                            isCollapsed === index
+                                                ? "bg-gray-100/90 text-blue-700"
+                                                : "text-gray-700 hover:bg-gray-50"
+                                        }`}
+                                    >
+                                        <div className="flex items-center space-x-3">
+                                            <item.icon className="w-5 h-5" />
+                                            {!isFull && (
+                                                <span>{item.label}</span>
+                                            )}
+                                        </div>
+                                        <div className="flex items-center space-x-2">
+                                            {item.badge && (
+                                                <span
+                                                    className={`${
+                                                        !isFull
+                                                            ? "px-2 py-1 text-xs"
+                                                            : "px-1 text-[8px]"
+                                                    }  bg-red-500 text-white rounded`}
+                                                >
+                                                    {item.badge}
+                                                </span>
+                                            )}
+                                            {item.hasSubmenu && (
+                                                <svg
+                                                    className={`w-4 h-4 transform transition-transform ${
+                                                        isCollapsed === index
+                                                            ? "rotate-90 duration-75"
+                                                            : ""
+                                                    }`}
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    viewBox="0 0 24 24"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        strokeWidth={2}
+                                                        d="M9 5l7 7-7 7"
+                                                    />
+                                                </svg>
+                                            )}
+                                        </div>
+                                    </a>
+                                    {item.hasSubmenu && (
+                                        <div
+                                            className={`px-5 m-auto bg-gray-100/50 overflow-hidden transition-all duration-500 ease-in-out ${
+                                                isCollapsed === index
+                                                    ? "max-h-auto opacity-100"
+                                                    : "max-h-0 opacity-0"
+                                            }`}
+                                        >
+                                            <ul className="flex-col flex gap-1 text-xs text-gray-600">
+                                                <li className="">
+                                                    <a href="">1</a>
+                                                </li>
+                                                <li className="">1</li>
+                                                <li className="">1</li>
+                                                <li className="">1</li>
+                                            </ul>
+                                        </div>
+                                    )}
+                                </li>
+                            );
+                        })}
+                    </ul> */}
                 </nav>
             </div>
             <div className="flex-1 flex flex-col overflow-hidden">

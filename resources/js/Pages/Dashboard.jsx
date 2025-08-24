@@ -1,7 +1,8 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, usePage } from "@inertiajs/react";
-
+import toast, { Toaster } from "react-hot-toast";
 import { Users, GraduationCap, BookOpen, TrendingUp } from "lucide-react";
+import { useEffect, useState } from "react";
 
 const stats = [
     {
@@ -36,7 +37,17 @@ const stats = [
 
 export default function Dashboard() {
     const { flash } = usePage().props;
-    console.log(flash.success);
+    const [shown, setShown] = useState(false);
+
+    useEffect(() => {
+        if (flash?.success && !shown) {
+            toast.success("Login successful!", {
+                duration: 4000,
+                position: "top-right",
+            });
+            setShown(true);
+        }
+    }, [flash, shown]);
 
     return (
         <AuthenticatedLayout
@@ -46,8 +57,14 @@ export default function Dashboard() {
         //     </h2>
         // }
         >
-            <Head title="Dashboard" />
+            <Toaster position="top-right" />
 
+            {/* <Head title="Dashboard" /> */}
+            {/* {flash.success && (
+                <div className="p-4 mb-4 text-green-700 bg-green-100 rounded-lg">
+                    {flash.success}
+                </div>
+            )} */}
             <div className="py-4">
                 <div className="mx-auto sm:px-6 lg:px-4">
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
