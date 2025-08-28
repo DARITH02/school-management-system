@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('parents', function (Blueprint $table) {
+        Schema::create('fees', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('permission_id')->constrained("permissions")->restrictOnDelete()->cascadeOnUpdate();
-            $table->string('name');
-            $table->string('email',20)->unique();
-            $table->string('phone',10)->unique();
+            $table->string('fee_type');
+            $table->decimal('amount');
+            $table->dateTime('due_date');
+            $table->string('description');
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('parents');
+        Schema::dropIfExists('fees');
     }
 };

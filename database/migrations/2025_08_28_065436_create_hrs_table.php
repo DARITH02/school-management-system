@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('student_parents', function (Blueprint $table) {
+        Schema::create('hrs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('permission_id')->constrained('permissions')->restrictOnDelete()->cascadeOnDelete();
-            $table->string('name');;
-            $table->string('phone');
-            $table->string('email')->unique()->nullable();
+              $table->string('hr_name');
+            $table->string('hr_contact');
             $table->timestamps();
         });
     }
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('student_parents');
+        Schema::dropIfExists('hrs');
     }
 };

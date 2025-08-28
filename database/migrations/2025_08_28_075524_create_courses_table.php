@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('permissions', function (Blueprint $table) {
+        Schema::create('courses', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('hr_id')->constrained('hr')->cascadeOnDelete()->cascadeOnUpdate();
-            $table->string("permission_name",50);
-            $table->string("access_rights",100);
-            $table->string("description",200);
+            $table->foreignId('teacher_id')->constrained('teachers')->restrictOnDelete()->cascadeOnUpdate();
+            // $table->foreignId();
+            $table->string('course_name');
+            $table->string('course_description');
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('permissions');
+        Schema::dropIfExists('courses');
     }
 };

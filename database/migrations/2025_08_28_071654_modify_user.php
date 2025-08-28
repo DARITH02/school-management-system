@@ -11,10 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('hr', function (Blueprint $table) {
-            $table->id();
-          
-            $table->timestamps();
+      Schema::table('users',  function (Blueprint $table) {
+            $table->foreignId('permission_id')->constrained('permissions')->cascadeOnDelete()->cascadeOnUpdate();
         });
     }
 
@@ -23,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('hr');
+        Schema::table('users', function (Blueprint $table) {
+            //
+        });
     }
 };

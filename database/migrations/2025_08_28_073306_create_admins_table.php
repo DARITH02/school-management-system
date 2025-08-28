@@ -11,9 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('hr', function (Blueprint $table) {
-            $table->string('hr_name');
-            $table->string('hr_contact');
+        Schema::create('admins', function (Blueprint $table) {
+          $table->id();
+            $table->foreignId('permission_id')->constrained('permissions')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->string('name',25);
+            $table->string('email',20)->unique();
+            $table->timestamps();
         });
     }
 
@@ -22,8 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('hr', function (Blueprint $table) {
-            $table->dropColumn(['hr_name','hr_contact']);
-        });
+        Schema::dropIfExists('admins');
     }
 };

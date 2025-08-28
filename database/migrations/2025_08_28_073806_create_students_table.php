@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId("teacher_id")->constrained("teachers")->restrictOnDelete()->cascadeOnUpdate();
             $table->foreignId("parent_id")->constrained("parents")->restrictOnDelete()->cascadeOnUpdate();
             $table->string("full_name");
-            $table->string("gender",10);
+            $table->string("gender", 10);
             $table->dateTime("Registration_date");
             $table->timestamps();
         });
