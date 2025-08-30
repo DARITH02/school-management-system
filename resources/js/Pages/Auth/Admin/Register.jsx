@@ -3,10 +3,11 @@ import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
 import GuestLayout from "@/Layouts/GuestLayout";
-import { Head, Link, useForm } from "@inertiajs/react";
-import { useState } from "react";
+import { Head, useForm, Link } from "@inertiajs/react";
+// import {  } from "lucide-react";
+import React, { useState } from "react";
 
-export default function Register() {
+const Register = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [dots, setDots] = useState("");
 
@@ -15,13 +16,14 @@ export default function Register() {
         email: "",
         password: "",
         password_confirmation: "",
+        permission_id: 2,
     });
 
     const submit = (e) => {
         e.preventDefault();
         setIsLoading(true);
         setTimeout(() => {
-            post(route("register"), {
+            post(route("register.store"), {
                 onFinish: () => {
                     reset("password", "password_confirmation"),
                         setIsLoading(false);
@@ -29,14 +31,13 @@ export default function Register() {
             });
         }, 500);
     };
-
     return (
         <GuestLayout>
             <Head title="Register" />
-            {isLoading && (
+            {/* {isLoading && (
                 <div className="fixed inset-0 bg-white flex items-center justify-center z-50">
                     <div className="text-center space-y-8">
-                        {/* Spinner */}
+                       
                         <div className="relative">
                             <div className="w-16 h-16 border-4 border-gray-300 border-t-indigo-500 rounded-full animate-spin mx-auto"></div>
                             <div
@@ -48,7 +49,7 @@ export default function Register() {
                             ></div>
                         </div>
 
-                        {/* Loading text */}
+                   
                         <div className="space-y-2">
                             <h1 className="text-2xl font-semibold text-gray-800">
                                 Logging in{dots}
@@ -59,11 +60,28 @@ export default function Register() {
                         </div>
                     </div>
                 </div>
-            )}
+            )} */}
 
             <form onSubmit={submit}>
                 <div className="uppercase my-3 text-center font-black text-2xl bg-gradient-to-r from-amber-800 to-amber-500 bg-clip-text text-transparent">
                     Register Admin form
+                </div>
+                <div>
+                    <InputLabel htmlFor="" value="Permission Name" />
+                    <TextInput
+                        value="2"
+                        id="permission_id"
+                        name="permission_id"
+                        readOnly
+                        hidden
+                    />
+                    <TextInput
+                        value="Admin"
+                        readOnly
+                        className="mt-1 block w-full"
+                    />
+
+                    <InputError message={errors.name} className="mt-2" />
                 </div>
                 <div>
                     <InputLabel htmlFor="name" value="Name" />
@@ -152,4 +170,6 @@ export default function Register() {
             </form>
         </GuestLayout>
     );
-}
+};
+
+export default Register;

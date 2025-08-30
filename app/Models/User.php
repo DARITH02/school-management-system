@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'permission_id'
     ];
 
     /**
@@ -45,4 +46,20 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+
+    public function admin(){
+        return $this->hasOne(Admin::class,'user_id');
+    }
+
+    public function isAdmin(){
+        return $this->admin !==null; 
+    }
+
+
+    public function permission(){
+        return $this->belongsTo(Permissions::class,'permission_id');
+    }
+
+
 }
